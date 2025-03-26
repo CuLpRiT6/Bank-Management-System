@@ -10,7 +10,7 @@ public class Signup2 extends JFrame implements ActionListener {
     JComboBox comboBox,comboBox2,comboBox3,comboBox4,comboBox5;
     JTextField textPan,textAadhar;
     JRadioButton r1,r2,e1,e2;
-    JButton next;
+    JButton next, back;
 
 
     String formno;//related to database
@@ -136,6 +136,12 @@ public class Signup2 extends JFrame implements ActionListener {
         r2.setBounds(460,490,100,30);
         add(r2);
 
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(r1);
+        buttonGroup.add(r2);
+
+
+
         JLabel l11 = new JLabel("Existing Account : ");
         l11.setFont(new Font("Raleway",Font.BOLD,18));
         l11.setBounds(100,540,180,30);
@@ -152,6 +158,11 @@ public class Signup2 extends JFrame implements ActionListener {
         e2.setBackground(new Color(252,208,76));
         e2.setBounds(460,540,100,30);
         add(e2);
+
+
+        ButtonGroup buttonGroup1 = new ButtonGroup();
+        buttonGroup1.add(e1);
+        buttonGroup1.add(e1);
 
         JLabel l12 = new JLabel("Form No : ");
         l12.setFont(new Font("Raleway",Font.BOLD,18));
@@ -172,6 +183,18 @@ public class Signup2 extends JFrame implements ActionListener {
         add(next);
 
 
+        back = new JButton("Back");
+        back.setFont(new Font("Raleway",Font.BOLD,14));
+        back.setBackground(Color.white);
+        back.setForeground(Color.BLACK);
+        back.setBounds(200,640,100,30);
+        back.addActionListener(this);
+        add(back);
+
+
+
+
+
         setLayout(null);
         setSize(850,750);
         setLocation(360,80);
@@ -181,6 +204,20 @@ public class Signup2 extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
+            if (e.getSource()==next) {
+                Signup3 signUpWindow3 = new Signup3();
+                signUpWindow3.setVisible(true);
+                dispose();
+            }
+            else if (e.getSource()==back) {
+                SignUp signUpWindow2 = new SignUp();
+                signUpWindow2.setVisible(true);
+                dispose();
+            }
+        } catch (Exception E) {
+            E.printStackTrace();
+        }
 
     }
 

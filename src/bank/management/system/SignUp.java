@@ -11,7 +11,7 @@ import java.util.Random;
 public class SignUp extends JFrame implements ActionListener {
 
     JRadioButton r1,r2,m1,m2,m3;
-    JButton next;
+    JButton next,back;
 
 
     JTextField textName , textFname , textEmail,  textAdd,textCity,textPin,textstate;
@@ -201,8 +201,17 @@ public class SignUp extends JFrame implements ActionListener {
         next.setBackground(Color.BLACK);
         next.setForeground(Color.WHITE);
         next.addActionListener(this);
-        next.setBounds(620,710,80,30);
+        next.setBounds(590,710,80,30);
         add(next);
+
+
+        back = new JButton("Back");
+        back.setFont(new Font("Raleway",Font.BOLD,14));
+        back.setBackground(Color.black);
+        back.setForeground(Color.WHITE);
+        back.setBounds(200,710,80,30);
+        back.addActionListener(this);
+        add(back);
 
 
 
@@ -222,6 +231,11 @@ public class SignUp extends JFrame implements ActionListener {
                 Signup2 signUpWindow2 = new Signup2();
                 signUpWindow2.setVisible(true);
                 dispose();
+            } else if (e.getSource()==back) {
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.setVisible(true);
+                dispose();
+
             }
         } catch (Exception E) {
             E.printStackTrace();

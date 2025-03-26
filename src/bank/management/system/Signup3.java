@@ -11,7 +11,7 @@ public class Signup3 extends JFrame implements ActionListener {
 
     JRadioButton r1,r2,r3,r4;
     JCheckBox c1,c2,c3,c4,c5,c6;
-    JButton s,c;
+    JButton s,c,back;
 
 
     Signup3(){
@@ -150,7 +150,7 @@ public class Signup3 extends JFrame implements ActionListener {
         c7.setBounds(100,680,600,20);
         add(c7);
 
-        JLabel l12 = new JLabel("Form No : ");
+        JLabel l12 = new JLabel("Form No : " );
         l12.setFont(new Font("Raleway",Font.BOLD,14));
         l12.setBounds(700,10,100,30);
         add(l12);
@@ -164,15 +164,28 @@ public class Signup3 extends JFrame implements ActionListener {
         s.setFont(new Font("Raleway",Font.BOLD,14));
         s.setBackground(Color.BLACK);
         s.setForeground(Color.white);
-        s.setBounds(250,720,100,30);
+        s.setBounds(350,720,100,30);
         add(s);
 
         c = new JButton("Cancel");
         c.setFont(new Font("Raleway",Font.BOLD,14));
         c.setBackground(Color.BLACK);
         c.setForeground(Color.white);
-        c.setBounds(420,720,100,30);
+        c.addActionListener(this);
+        c.setBounds(550,720,100,30);
         add(c);
+
+
+        back = new JButton("Back");
+        back.setFont(new Font("Raleway",Font.BOLD,14));
+        back.setBackground(Color.BLACK);
+        back.setForeground(Color.white);
+        back.addActionListener(this);
+        back.setBounds(150,720,100,30);
+        add(back);
+
+
+
 
         getContentPane().setBackground(new Color(215,252,252));
         setSize(850,800);
@@ -184,6 +197,17 @@ public class Signup3 extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource()==back) {
+            Signup2 signUpWindow3 = new Signup2();
+            signUpWindow3.setVisible(true);
+            dispose();
+        }
+        else if (e.getSource()==c) {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.setVisible(true);
+            dispose();
+
+        }
 
     }
 
