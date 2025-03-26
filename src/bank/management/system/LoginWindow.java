@@ -19,7 +19,7 @@ public class LoginWindow extends JFrame implements ActionListener {
         super("Bank Management System");
 
 
-
+// Adding  icons
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/bank.png"));
         Image i2 = i1.getImage().getScaledInstance(100,100, Image.SCALE_DEFAULT);
         ImageIcon i3 = new ImageIcon(i2);
@@ -50,7 +50,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 
 
 
-
+// adding writing space for account no and PIN
         label1 = new JLabel("Welcome to the Login page");
         label1.setForeground(Color.WHITE);
         label1.setBounds(200,100,500,50);
@@ -86,43 +86,46 @@ public class LoginWindow extends JFrame implements ActionListener {
 
 
 
-
+// Sign in button
         button1 = new JButton("SIGN IN");
         button1.setForeground(Color.WHITE);
         button1.setBackground(Color.LIGHT_GRAY);
         button1.setFont(new Font("London", Font.BOLD, 20));
-        button1.setBounds(240,300,150,30);
+        button1.setBounds(280,300,150,30);
         button1.addActionListener(this);
         add(button1);
 
+ // sign up button
         button2 = new JButton("SIGN UP");
         button2.setForeground(Color.WHITE);
         button2.setBackground(Color.LIGHT_GRAY);
         button2.setFont(new Font("London", Font.BOLD, 20));
-        button2.setBounds(400,300,170,30);
+        button2.setBounds(440,300,170,30);
         button2.addActionListener(this);
         add(button2);
 
+// clear button
         button3 = new JButton("CLEAR");
         button3.setBackground(Color.LIGHT_GRAY);
         button3.setForeground(Color.WHITE);
         button3.setFont(new Font("London", Font.BOLD, 20));
-        button3.setBounds(240,350,150,30);
+        button3.setBounds(280,350,150,30);
         button3.addActionListener(this);
         add(button3);
 
+// forgot pin button
         button4 = new JButton("FORGOT PIN");
         button4.setForeground(Color.WHITE);
         button4.setBackground(Color.LIGHT_GRAY);
         button4.setFont(new Font("London", Font.BOLD, 20));
-        button4.setBounds(400,350,170,30);
+        button4.setBounds(440,350,170,30);
         button4.addActionListener(this);
         add(button4);
 
 
 
 
-
+// adding background
         ImageIcon i13 = new ImageIcon(ClassLoader.getSystemResource("icons/bg.jpg"));
         Image i14 = i13.getImage().getScaledInstance(900,450, Image.SCALE_DEFAULT);
         ImageIcon i15 = new ImageIcon(i14);
@@ -131,7 +134,7 @@ public class LoginWindow extends JFrame implements ActionListener {
         add(image4);
 
 
-
+// setting location and size of the window
         setLayout(null);
         setSize(900,450);
         setLocation(350,250);
@@ -139,6 +142,7 @@ public class LoginWindow extends JFrame implements ActionListener {
     }
 
 
+//  performing actions on the buttons
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -166,6 +170,7 @@ public class LoginWindow extends JFrame implements ActionListener {
         }
     }
 
+    // calling the LoginWindow class
     public static void main(String[] args) {
         new LoginWindow();
     }
