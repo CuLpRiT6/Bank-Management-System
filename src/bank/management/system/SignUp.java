@@ -217,6 +217,15 @@ public class SignUp extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
+            if (e.getSource()==next) {
+                Signup2 signUpWindow2 = new Signup2();
+                signUpWindow2.setVisible(true);
+                dispose();
+            }
+        } catch (Exception E) {
+            E.printStackTrace();
+        }
 
     }
 

@@ -147,6 +147,9 @@ public class LoginWindow extends JFrame implements ActionListener {
 
             }
             else if (e.getSource() == button2) {
+                SignUp signUpWindow = new SignUp();
+                signUpWindow.setVisible(true);
+                dispose();
 
             }
             else if (e.getSource() == button3) {

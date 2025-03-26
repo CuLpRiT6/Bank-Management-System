@@ -16,7 +16,7 @@ public class Signup2 extends JFrame implements ActionListener {
     String formno;//related to database
 
 
-    Signup2(String first){//related to database
+    Signup2 () {//related to database
         super("APPLICATION FORM");
 
 
@@ -185,7 +185,7 @@ public class Signup2 extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args){
-        new Signup2("");//related to database
+        new Signup2();//related to database
 
 
     }
