@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 
 public class Signup3 extends JFrame implements ActionListener {
@@ -13,8 +14,12 @@ public class Signup3 extends JFrame implements ActionListener {
     JCheckBox c1,c2,c3,c4,c5,c6;
     JButton s,c,back;
 
+    String formno;
 
-    Signup3(){
+    Signup3(String formno){
+
+        this.formno = formno;
+
 
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/bank.png"));
         Image i2 = i1.getImage().getScaledInstance(100,100, Image.SCALE_DEFAULT);
@@ -114,7 +119,7 @@ public class Signup3 extends JFrame implements ActionListener {
         c1.setBounds(100,500,200,30);
         add(c1);
 
-        c2 = new JCheckBox("Interet Banking");
+        c2 = new JCheckBox("Internet Banking");
         c2.setBackground(new Color(215,252,252));
         c2.setFont(new Font("Raleway",Font.BOLD,16));
         c2.setBounds(350,500,200,30);
@@ -126,7 +131,7 @@ public class Signup3 extends JFrame implements ActionListener {
         c3.setBounds(100,550,200,30);
         add(c3);
 
-        c4 = new JCheckBox("Email Alert");
+        c4 = new JCheckBox("Email Alerts");
         c4.setBackground(new Color(215,252,252));
         c4.setFont(new Font("Raleway",Font.BOLD,16));
         c4.setBounds(350,550,200,30);
@@ -155,7 +160,7 @@ public class Signup3 extends JFrame implements ActionListener {
         l12.setBounds(700,10,100,30);
         add(l12);
 
-        JLabel l13 = new JLabel();
+        JLabel l13 = new JLabel(formno);
         l13.setFont(new Font("Raleway",Font.BOLD,14));
         l13.setBounds(760,10,60,30);
         add(l13);
@@ -164,6 +169,7 @@ public class Signup3 extends JFrame implements ActionListener {
         s.setFont(new Font("Raleway",Font.BOLD,14));
         s.setBackground(Color.BLACK);
         s.setForeground(Color.white);
+        s.addActionListener(this);
         s.setBounds(350,720,100,30);
         add(s);
 
@@ -197,25 +203,115 @@ public class Signup3 extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource()==back) {
-            Signup2 signUpWindow3 = new Signup2();
-            signUpWindow3.setVisible(true);
-            dispose();
-        }
-        else if (e.getSource()==c) {
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.setVisible(true);
-            dispose();
 
-        }
+
+
+        String aType = null;
+         if (r1.isSelected()) {
+             aType = "Saving Account";
+         }
+         else if (r2.isSelected()) {
+             aType = "Fixed Deposit Account";
+         }
+         else if (r3.isSelected()) {
+             aType = "Current Account";
+         }
+         else if (r4.isSelected()) {
+             aType = "Recurring Deposit Account";
+         }
+
+         Random ran = new Random();
+         long first7 = (ran.nextLong() % 90000000L) + 1876569000000000L;
+        String cardNo = "" + Math.abs(first7);
+
+         long first3 = (ran.nextLong() % 9000L) + 1000L;
+         String pin = "" + Math.abs(first3);
+
+         String faci = "";
+         if (c1.isSelected()) {
+             faci += "ATM CARD";
+         }
+         else if (c2.isSelected()) {
+             faci += "Internet Banking";
+         }
+         else if (c3.isSelected()) {
+             faci += "Mobile Banking";
+         }
+         else if (c4.isSelected()) {
+             faci += "Email Alerts";
+         }
+         else if (c5.isSelected()) {
+             faci += "Cheque Book";
+         }
+         else if (c6.isSelected()) {
+             faci += "E-Statement";
+         }
+
+
+
+
+        try {
+
+
+             if (e.getSource()==back) {
+                 Signup2 signUpWindow3 = new Signup2(formno);
+                 signUpWindow3.setVisible(true);
+                 setVisible(false);
+             }
+
+             else {
+
+
+                 if (e.getSource() == s) {
+                     if (aType.equals("")) {
+                         JOptionPane.showMessageDialog(null, "Fill all the fields");
+                     } else {
+                         Conn c1 = new Conn();
+                         String q1 = "insert into signupthree values('" + formno + "', '" + aType + "', '" + cardNo + "', '"+pin+"', '" + faci + "')";
+                         String q2 = "insert into login values('" + formno + "', '" + cardNo + "', '" + pin + "')";
+                         System.out.println("Query 1: " + q1);
+                         System.out.println("Query 2: " + q2);
+                         c1.statement.executeUpdate(q1);
+                         c1.statement.executeUpdate(q2);
+                         JOptionPane.showMessageDialog(null, "Card Number : " + cardNo + "\n Pin : " + pin);
+                         setVisible(false);
+
+                         LoginWindow loginWindow = new LoginWindow();
+                         loginWindow.setVisible(true);
+                         setVisible(false);
+
+
+                     }
+
+
+                 } else if (e.getSource() == c) {
+                     LoginWindow loginWindow = new LoginWindow();
+                     loginWindow.setVisible(true);
+                     setVisible(false);
+
+                 }
+             }
+
+
+
+
+         }
+         catch (Exception E) {
+             E.printStackTrace();
+         }
+
+
+
 
     }
 
     public static void main(String[] args){
 
-        new Signup3();
+        new Signup3("");
 
     }
 
 
 }
+
+

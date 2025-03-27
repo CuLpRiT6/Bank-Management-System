@@ -147,11 +147,6 @@ public class SignUp extends JFrame implements ActionListener {
 
 
 
-
-
-
-
-
         JLabel labelAdd = new JLabel("Address :");
         labelAdd.setFont(new Font("Raleway",Font.BOLD,20));
         labelAdd.setBounds(100,490,200,30);
@@ -226,17 +221,61 @@ public class SignUp extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        String formno = first;
+        String name = textName.getText();
+        String fname = textFname.getText();
+        String dob = ((JTextField) dateChooser.getDateEditor().getUiComponent()).getText();
+        String gender = null;
+        if (r1.isSelected()) {
+            gender = "Male";
+
+        }else if (r2.isSelected()) {
+            gender = "Female";
+        }
+        String email = textEmail.getText();
+        String martial = null;
+        if (m1.isSelected()) {
+            martial = "Married";
+        } else if (m2.isSelected()) {
+            martial = "Unmarried";
+        } else if (m3.isSelected()) {
+            martial = "Other";
+        }
+
+        String address = textAdd.getText();
+        String city = textCity.getText();
+        String pin = textPin.getText();
+        String state = textstate.getText();
+
+
         try {
-            if (e.getSource()==next) {
-                Signup2 signUpWindow2 = new Signup2();
-                signUpWindow2.setVisible(true);
-                dispose();
-            } else if (e.getSource()==back) {
+
+            if (e.getSource()==back) {
                 LoginWindow loginWindow = new LoginWindow();
                 loginWindow.setVisible(true);
-                dispose();
+                setVisible(false);
+            } else {
+
+
+            if (textName.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Fill all the fields");
+
+            }else {
+                Conn conn1 = new Conn();
+                String q = "insert into signup values('" + formno + "', '" + name + "', '" + fname + "', '" + dob + "', '" + gender + "', '" + email + "', '" + martial + "', '" + address + "', '" + city + "', '" + pin + "', '" + state + "')";
+                conn1.statement.executeUpdate(q);
+
+                if (e.getSource() == next) {
+                    Signup2 signUpWindow2 = new Signup2(formno);
+                    signUpWindow2.setVisible(true);
+                    setVisible(false);
+                }
+            }
 
             }
+
+
         } catch (Exception E) {
             E.printStackTrace();
         }

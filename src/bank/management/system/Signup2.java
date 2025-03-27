@@ -16,7 +16,7 @@ public class Signup2 extends JFrame implements ActionListener {
     String formno;//related to database
 
 
-    Signup2 () {//related to database
+    Signup2 (String formno) {//related to database
         super("APPLICATION FORM");
 
 
@@ -204,17 +204,57 @@ public class Signup2 extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        String relegion = (String) comboBox.getSelectedItem();
+        String category = (String) comboBox2.getSelectedItem();
+        String income = (String) comboBox3.getSelectedItem();
+        String edu = (String) comboBox4.getSelectedItem();
+        String occ = (String) comboBox5.getSelectedItem();
+
+        String pan = textPan.getText();
+        String aadhar = textAadhar.getText();
+
+        String sc = null;
+        if (r1.isSelected()) {
+            sc = "Yes";
+        } else if (r2.isSelected()) {
+            sc = "No";
+        }
+
+        String eAccount = null;
+        if (e1.isSelected()) {
+            eAccount = "Yes";
+        } else if (e2.isSelected()) {
+            eAccount = "No";
+        }
+
+
+
         try {
-            if (e.getSource()==next) {
-                Signup3 signUpWindow3 = new Signup3();
-                signUpWindow3.setVisible(true);
-                dispose();
-            }
-            else if (e.getSource()==back) {
+            if (e.getSource()==back) {
                 SignUp signUpWindow2 = new SignUp();
                 signUpWindow2.setVisible(true);
-                dispose();
+                setVisible(false);
             }
+            else   {
+
+                if (textPan.getText().equals(" ") || textAadhar.getText().equals(" ")) {
+                    JOptionPane.showMessageDialog(null, "Fill all the text fields");
+
+                } else {
+                    Conn conn2 = new Conn();
+                    String q = "insert into signuptwo values('" + formno + "', '" + relegion + "', '" + category + "', '" + income + "', '" + edu + "', '" + occ + "', '" + pan + "', '" + aadhar + "', '" + sc + "', '" + eAccount + "')";
+                    conn2.statement.executeUpdate(q);
+
+                    if (e.getSource() == next) {
+                        Signup3 signUpWindow3 = new Signup3(formno);
+                        signUpWindow3.setVisible(true);
+                        setVisible(false);
+                    }
+
+                }
+            }
+
         } catch (Exception E) {
             E.printStackTrace();
         }
@@ -222,7 +262,7 @@ public class Signup2 extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args){
-        new Signup2();//related to database
+        new Signup2("");//related to database
 
 
     }
