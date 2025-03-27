@@ -148,12 +148,15 @@ public class LoginWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             if (e.getSource() == button1) {
+                Dashboard signin = new Dashboard();
+                signin.setVisible(true);
+                setVisible(false);
 
             }
             else if (e.getSource() == button2) {
                 SignUp signUpWindow = new SignUp();
                 signUpWindow.setVisible(true);
-                dispose();
+                setVisible(false);
 
             }
             else if (e.getSource() == button3) {
