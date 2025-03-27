@@ -27,6 +27,9 @@ public class LoginWindow extends JFrame implements ActionListener {
         image.setBounds(390,10,100,100);
         add(image);
 
+        System.out.println("apple");
+
+
         ImageIcon i4 = new ImageIcon(ClassLoader.getSystemResource("icons/banker.png"));
         Image i5 = i4.getImage().getScaledInstance(100,100, Image.SCALE_DEFAULT);
         ImageIcon i6 = new ImageIcon(i5);
