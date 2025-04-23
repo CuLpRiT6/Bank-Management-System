@@ -1,11 +1,14 @@
 package bank.management.system;
 
-import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Dashboard extends JFrame {
     // Enhanced color scheme
@@ -17,6 +20,7 @@ public class Dashboard extends JFrame {
     private static final Color ERROR_COLOR = new Color(231, 76, 60);
     private static final Color SUCCESS_COLOR = new Color(46, 204, 113);
     private static final Color WARNING_COLOR = new Color(241, 196, 15);
+    private static final Color LOAN_COLOR = new Color(155, 89, 182);
     private static final Color SHADOW_COLOR = new Color(0, 0, 0, 30);
 
     // Fonts
@@ -41,8 +45,21 @@ public class Dashboard extends JFrame {
     private JLabel accountsCountLabel;
     private JLabel totalBalanceLabel;
 
+    // Loan components
+    private JTextField loanAccountField;
+    private JTextField loanAmountField;
+    private JTextField loanInterestField;
+    private JTextField loanTermField;
+    private JButton applyLoanButton;
+    private JButton approveLoanButton;
+    private JButton makePaymentButton;
+    private JTable loansTable;
+    private JTextField paymentAmountField;
+    private JTextField paymentLoanIdField;
+
     // Data
     private final Map<String, BankAccount> accounts = new HashMap<>();
+    private final Map<String, List<Loan>> accountLoans = new HashMap<>();
 
     public Dashboard() {
         configureWindow();
@@ -54,8 +71,8 @@ public class Dashboard extends JFrame {
     private void configureWindow() {
         setTitle("Banking Management Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 650);
-        setMinimumSize(new Dimension(750, 600));
+        setSize(900, 700);
+        setMinimumSize(new Dimension(800, 650));
         setLocationRelativeTo(null);
         getContentPane().setBackground(BACKGROUND_COLOR);
     }
@@ -105,10 +122,12 @@ public class Dashboard extends JFrame {
         // Create panels
         JPanel accountPanel = createAccountPanel();
         JPanel transactionPanel = createTransactionPanel();
+        JPanel loanPanel = createLoanPanel();
 
         // Add tabs
         tabbedPane.addTab("Account Management", accountPanel);
         tabbedPane.addTab("Transactions", transactionPanel);
+        tabbedPane.addTab("Loan Management", loanPanel);
 
         // Custom tab UI
         tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
@@ -291,6 +310,140 @@ public class Dashboard extends JFrame {
         return panel;
     }
 
+    private JPanel createLoanPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND_COLOR);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        // Create tabbed pane for loan operations
+        JTabbedPane loanTabbedPane = new JTabbedPane();
+        loanTabbedPane.addTab("Apply for Loan", createLoanApplicationPanel());
+        loanTabbedPane.addTab("Manage Loans", createLoanManagementPanel());
+
+        panel.add(loanTabbedPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JPanel createLoanApplicationPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                new DropShadowBorder(SHADOW_COLOR, 5, 0.3f, 12, false, true, true, true),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Account number
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(createLabel("Account Number:"), gbc);
+        gbc.gridx = 1;
+        loanAccountField = createTextField();
+        panel.add(loanAccountField, gbc);
+
+        // Loan amount
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(createLabel("Loan Amount ($):"), gbc);
+        gbc.gridx = 1;
+        loanAmountField = createTextField();
+        panel.add(loanAmountField, gbc);
+
+        // Interest rate
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(createLabel("Interest Rate (%):"), gbc);
+        gbc.gridx = 1;
+        loanInterestField = createTextField();
+        panel.add(loanInterestField, gbc);
+
+        // Term (months)
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(createLabel("Term (months):"), gbc);
+        gbc.gridx = 1;
+        loanTermField = createTextField();
+        panel.add(loanTermField, gbc);
+
+        // Apply button
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+        applyLoanButton = createStyledButton("Apply for Loan", LOAN_COLOR);
+        panel.add(applyLoanButton, gbc);
+
+        return panel;
+    }
+
+    private JPanel createLoanManagementPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                new DropShadowBorder(SHADOW_COLOR, 5, 0.3f, 12, false, true, true, true),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+
+        // Create table model for loans
+        String[] columnNames = {"Loan ID", "Account", "Amount", "Interest", "Term", "Balance", "Status", "Date"};
+        Object[][] data = {};
+        loansTable = new JTable(data, columnNames);
+        loansTable.setFont(FIELD_FONT);
+        loansTable.setRowHeight(25);
+        loansTable.setAutoCreateRowSorter(true);
+
+        JScrollPane scrollPane = new JScrollPane(loansTable);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Payment panel
+        JPanel paymentPanel = new JPanel(new GridBagLayout());
+        paymentPanel.setBackground(CARD_COLOR);
+        paymentPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Loan ID for payment
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        paymentPanel.add(createLabel("Loan ID:"), gbc);
+        gbc.gridx = 1;
+        paymentLoanIdField = createTextField();
+        paymentPanel.add(paymentLoanIdField, gbc);
+
+        // Payment amount
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        paymentPanel.add(createLabel("Payment Amount:"), gbc);
+        gbc.gridx = 1;
+        paymentAmountField = createTextField();
+        paymentPanel.add(paymentAmountField, gbc);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        approveLoanButton = createStyledButton("Approve Loan", SUCCESS_COLOR);
+        makePaymentButton = createStyledButton("Make Payment", SECONDARY_COLOR);
+
+        buttonPanel.add(approveLoanButton);
+        buttonPanel.add(makePaymentButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+        paymentPanel.add(buttonPanel, gbc);
+
+        panel.add(paymentPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(LABEL_FONT);
@@ -347,6 +500,9 @@ public class Dashboard extends JFrame {
         updateAccountButton.addActionListener(this::updateAccount);
         deleteAccountButton.addActionListener(this::deleteAccount);
         processTransactionButton.addActionListener(this::processTransaction);
+        applyLoanButton.addActionListener(this::applyForLoan);
+        approveLoanButton.addActionListener(this::approveLoan);
+        makePaymentButton.addActionListener(this::makeLoanPayment);
     }
 
     private void applyStyles() {
@@ -493,6 +649,163 @@ public class Dashboard extends JFrame {
         }
     }
 
+    private void applyForLoan(ActionEvent e) {
+        String accountNumber = loanAccountField.getText().trim();
+        String amountText = loanAmountField.getText().trim();
+        String interestText = loanInterestField.getText().trim();
+        String termText = loanTermField.getText().trim();
+
+        if (accountNumber.isEmpty() || amountText.isEmpty() || interestText.isEmpty() || termText.isEmpty()) {
+            showError("Please fill all fields");
+            return;
+        }
+
+        if (!accounts.containsKey(accountNumber)) {
+            showError("Account not found");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(amountText);
+            double interestRate = Double.parseDouble(interestText);
+            int termMonths = Integer.parseInt(termText);
+
+            if (amount <= 0 || interestRate <= 0 || termMonths <= 0) {
+                showError("Values must be positive");
+                return;
+            }
+
+            // Generate loan ID
+            String loanId = "LN-" + System.currentTimeMillis();
+
+            // Create new loan (initially pending)
+            Loan newLoan = new Loan(loanId, accountNumber, amount, interestRate, termMonths, "Pending");
+
+            // Add to account's loans
+            accountLoans.computeIfAbsent(accountNumber, k -> new ArrayList<>()).add(newLoan);
+
+            showInfo("Loan application submitted successfully");
+            updateLoansTable();
+            clearLoanFields();
+        } catch (NumberFormatException ex) {
+            showError("Invalid numeric values");
+        }
+    }
+
+    private void approveLoan(ActionEvent e) {
+        String loanId = paymentLoanIdField.getText().trim();
+
+        if (loanId.isEmpty()) {
+            showError("Please enter Loan ID");
+            return;
+        }
+
+        boolean found = false;
+        for (Map.Entry<String, List<Loan>> entry : accountLoans.entrySet()) {
+            List<Loan> loans = entry.getValue();
+            for (int i = 0; i < loans.size(); i++) {
+                Loan loan = loans.get(i);
+                if (loan.getLoanId().equals(loanId) && loan.getStatus().equals("Pending")) {
+                    // Replace with approved loan
+                    loans.set(i, new Loan(loanId, loan.getAccountNumber(), loan.getAmount(),
+                            loan.getInterestRate(), loan.getTermMonths(), "Approved"));
+                    found = true;
+                    showInfo("Loan approved successfully");
+                    updateLoansTable();
+                    break;
+                }
+            }
+            if (found) break;
+        }
+
+        if (!found) {
+            showError("Loan not found or not pending approval");
+        }
+    }
+
+    private void makeLoanPayment(ActionEvent e) {
+        String loanId = paymentLoanIdField.getText().trim();
+        String amountText = paymentAmountField.getText().trim();
+
+        if (loanId.isEmpty() || amountText.isEmpty()) {
+            showError("Please fill all fields");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(amountText);
+            if (amount <= 0) {
+                showError("Payment amount must be positive");
+                return;
+            }
+
+            boolean found = false;
+            for (Map.Entry<String, List<Loan>> entry : accountLoans.entrySet()) {
+                List<Loan> loans = entry.getValue();
+                for (int i = 0; i < loans.size(); i++) {
+                    Loan loan = loans.get(i);
+                    if (loan.getLoanId().equals(loanId) && loan.getStatus().equals("Approved")) {
+                        if (amount > loan.getRemainingBalance()) {
+                            showError("Payment exceeds remaining balance");
+                            return;
+                        }
+
+                        // Make payment
+                        Loan updatedLoan = new Loan(
+                                loan.getLoanId(),
+                                loan.getAccountNumber(),
+                                loan.getAmount(),
+                                loan.getInterestRate(),
+                                loan.getTermMonths(),
+                                loan.getRemainingBalance() - amount <= 0.01 ? "Paid" : "Approved"
+                        );
+                        updatedLoan.makePayment(amount);
+                        loans.set(i, updatedLoan);
+
+                        found = true;
+                        showInfo("Payment processed successfully");
+                        updateLoansTable();
+                        clearPaymentFields();
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+
+            if (!found) {
+                showError("Loan not found or not approved");
+            }
+        } catch (NumberFormatException ex) {
+            showError("Invalid payment amount");
+        }
+    }
+
+    private void updateLoansTable() {
+        // Collect all loans
+        List<Loan> allLoans = new ArrayList<>();
+        for (List<Loan> loans : accountLoans.values()) {
+            allLoans.addAll(loans);
+        }
+
+        // Create table model
+        String[] columnNames = {"Loan ID", "Account", "Amount", "Interest", "Term", "Balance", "Status", "Date"};
+        Object[][] data = new Object[allLoans.size()][8];
+
+        for (int i = 0; i < allLoans.size(); i++) {
+            Loan loan = allLoans.get(i);
+            data[i][0] = loan.getLoanId();
+            data[i][1] = loan.getAccountNumber();
+            data[i][2] = String.format("$%.2f", loan.getAmount());
+            data[i][3] = String.format("%.2f%%", loan.getInterestRate());
+            data[i][4] = loan.getTermMonths() + " months";
+            data[i][5] = String.format("$%.2f", loan.getRemainingBalance());
+            data[i][6] = loan.getStatus();
+            data[i][7] = loan.getDateApplied();
+        }
+
+        loansTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
     private void updateStats() {
         int count = accounts.size();
         double total = accounts.values().stream().mapToDouble(BankAccount::getBalance).sum();
@@ -510,6 +823,18 @@ public class Dashboard extends JFrame {
     private void clearTransactionFields() {
         transactionAccountField.setText("");
         transactionAmountField.setText("");
+    }
+
+    private void clearLoanFields() {
+        loanAccountField.setText("");
+        loanAmountField.setText("");
+        loanInterestField.setText("");
+        loanTermField.setText("");
+    }
+
+    private void clearPaymentFields() {
+        paymentLoanIdField.setText("");
+        paymentAmountField.setText("");
     }
 
     private void showError(String message) {
@@ -580,6 +905,51 @@ public class Dashboard extends JFrame {
 
         public void setAccountName(String accountName) {
             this.accountName = accountName;
+        }
+    }
+
+    private static class Loan {
+        private final String loanId;
+        private final String accountNumber;
+        private final double amount;
+        private final double interestRate;
+        private final int termMonths;
+        private double remainingBalance;
+        private final String status;
+        private final String dateApplied;
+
+        public Loan(String loanId, String accountNumber, double amount,
+                    double interestRate, int termMonths, String status) {
+            this.loanId = loanId;
+            this.accountNumber = accountNumber;
+            this.amount = amount;
+            this.interestRate = interestRate;
+            this.termMonths = termMonths;
+            this.remainingBalance = amount * (1 + (interestRate/100));
+            this.status = status;
+            this.dateApplied = java.time.LocalDate.now().toString();
+        }
+
+        public Loan(String loanId, String accountNumber, double amount,
+                    double interestRate, int termMonths, double remainingBalance) {
+            this(loanId, accountNumber, amount, interestRate, termMonths,
+                    remainingBalance <= 0.01 ? "Paid" : "Approved");
+            this.remainingBalance = remainingBalance;
+        }
+
+        public String getLoanId() { return loanId; }
+        public String getAccountNumber() { return accountNumber; }
+        public double getAmount() { return amount; }
+        public double getInterestRate() { return interestRate; }
+        public int getTermMonths() { return termMonths; }
+        public double getRemainingBalance() { return remainingBalance; }
+        public String getStatus() { return status; }
+        public String getDateApplied() { return dateApplied; }
+
+        public void makePayment(double amount) {
+            if (amount > 0 && amount <= remainingBalance) {
+                remainingBalance -= amount;
+            }
         }
     }
 
@@ -682,4 +1052,3 @@ public class Dashboard extends JFrame {
         }
     }
 }
-
