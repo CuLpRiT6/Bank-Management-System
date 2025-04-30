@@ -194,12 +194,13 @@ public class Signup2 extends JFrame implements ActionListener {
 
 
 
-
-        setLayout(null);
-        setSize(850,750);
-        setLocation(360,80);
         getContentPane().setBackground(new Color(252,208,76));
+        setLayout(null);
+        setSize(1600, 800);
+        setLocationRelativeTo(null);
         setVisible(true);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
     }
 
     @Override
